@@ -1,0 +1,16 @@
+{
+    "port": 3200,
+    "logger": false,
+    "saltKey": "2FE85B9DFA94B787D22A2A195A63A",
+    "secretKey": "u6aE7Qx1M1QxIjHqWD66K1thna2gmpbiRRcjwP1cX7aFdkh472BGLEuA9sNGpfx7XDayMYAx16Avt7yFSlNIJqD4HB53pBZ2p0L4s4gQlDa6egsRKSVQ2QTWMG8EaudL",
+    "refreshSecretKey": "UJoUUFJ1tjPmftwo6L9tmdqV6B0LPUvXBthhS8aF3KyL78nYXZpLR8qO0FHYiene0eIe83KcV7rIL1w70vT2XhiWs3ZFOi8hopsSFRvJFl155cMQyLFyDE5gaHzZR9HK",
+    "database": {
+        "type": "postgres",
+        "host": "host.zhub.app",
+        "port": 5432,
+        "username": "pgadmin",
+        "password": "Postgre5_Z053",
+        "db": "modular",
+        "schema": "modSchema"
+    }
+}
