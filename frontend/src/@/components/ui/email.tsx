@@ -1,7 +1,9 @@
 import React from "react";
 import { Input } from "./input";
 
-interface EmailProps extends React.InputHTMLAttributes<HTMLInputElement> { }
+interface EmailProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    isvalid?: boolean
+}
 
 
 const Email = React.forwardRef<HTMLInputElement, EmailProps>(

@@ -1,7 +1,7 @@
 import express from 'express';
 import validator from '../../common/helpers/middelware/validator';
 import { body } from 'express-validator';
-import { successResponse } from '../../common/helpers/response/success';
+import { createResponse, successResponse } from '../../common/helpers/response/success';
 import { invalidResponse, serverErrorResponse } from '../../common/helpers/response/error';
 import logger from '../../common/helpers/logger';
 import { Repo } from '../../common/database/repository';
@@ -9,7 +9,7 @@ import { Businesses } from '../../common/database/models/business.model';
 import { Users } from '../../common/database/models/users.model';
 import { UserBusiness, UserTypes } from '../../common/database/models/user-business.model';
 import initialProcess from '../../common/events/async/initial-process';
-import { generateToken } from '../../common/helpers/token';
+import { generateRefreshToken, generateToken } from '../../common/helpers/token';
 
 const signUp = express.Router();
 
@@ -26,6 +26,8 @@ signUp.post("/", validator(validData), async (req, res) => {
     try {
 
         const { first_name, last_name, email, password, domain, agree_to_terms } = req.body;
+
+        console.log("Body", req.body);
 
         if (!agree_to_terms) {
             return invalidResponse(res, "You must agree to term and conditions");
@@ -76,9 +78,11 @@ signUp.post("/", validator(validData), async (req, res) => {
         initialProcess(user, business);
 
         const token = generateToken({ id: user?.id, domain: business.id, user_type: UserTypes.OWNER });
+        const refreshToken = generateRefreshToken({ id: user?.id });
+
 
         // Set the token in a cookie
-        res.cookie('access', token, { httpOnly: true, maxAge: 86400000 });
+        res.cookie('access', token, { httpOnly: true, maxAge: 86400000, sameSite: 'none' });
 
         const userPayload = {
             first_name,
@@ -90,9 +94,11 @@ signUp.post("/", validator(validData), async (req, res) => {
             domain: business.id,
             user_type: UserTypes.OWNER,
             verified: user.verified,
+            access: token,
+            refresh: refreshToken
         }
 
-        return successResponse(res, "SignUp successfully", userPayload);
+        return createResponse(res, "SignUp successfully", userPayload);
     } catch (err) {
         logger(`[FROM]: signup \n[ERR]: ${err}`);
         return serverErrorResponse(res);

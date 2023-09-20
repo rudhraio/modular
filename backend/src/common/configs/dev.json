@@ -6,10 +6,10 @@
     "refreshSecretKey": "UJoUUFJ1tjPmftwo6L9tmdqV6B0LPUvXBthhS8aF3KyL78nYXZpLR8qO0FHYiene0eIe83KcV7rIL1w70vT2XhiWs3ZFOi8hopsSFRvJFl155cMQyLFyDE5gaHzZR9HK",
     "database": {
         "type": "postgres",
-        "host": "host.zhub.app",
+        "host": "localhost",
         "port": 5432,
         "username": "pgadmin",
-        "password": "Postgre5_Z053",
+        "password": "pgadmin",
         "db": "modular",
         "schema": "modSchema"
     }

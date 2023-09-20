@@ -1,91 +1,159 @@
 import { useState } from 'react';
 
-interface FormValues {
-    [key: string]: any;
-}
+type FieldConfig = {
+    value: string | boolean;
+    required?: boolean;
+    pattern?: any;
+    errorMessage?: string;
+    isvalid?: boolean;
+};
 
-interface FieldProps {
-    name: string;
-    value: any;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onBlur: () => void;
-}
+export type FormValues = {
+    [key: string]: FieldConfig;
+};
 
-interface FormBag {
-    formValid: boolean;
+export type Values = {
+    [key: string]: string;
+};
+
+type Errors = {
+    [key: string]: string;
+};
+
+type Touched = {
+    [key: string]: boolean;
+};
+
+type FormProps = {
     values: FormValues;
-    handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    handleBlur: (name: string) => void;
+    errors: Errors;
+    touched: Touched;
+    isSubmitting: boolean;
+    handleChange: (fieldName: string, value: string) => void;
+    handleBlur: (fieldName: string) => void;
+    handleSubmit: (onSubmit: (values: Values) => void) => Promise<void>;
+    getFormValues: () => FormValues;
     isFormValid: () => boolean;
-    handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-    getFieldProps: (name: string) => FieldProps;
-    errors: FormValues;
-    touched: FormValues;
-}
+};
 
-function Form(initialValues: FormValues, onSubmit: (values: FormValues, isFormValid: boolean) => void) {
-    const [values, setValues] = useState(initialValues);
-    const [errors, setErrors] = useState<FormValues>({});
-    const [touched, setTouched] = useState<FormValues>({});
-    const [formValid, setFormValid] = useState(false);
+export function useFormHook(initialValues: FormValues): FormProps {
+    const [values, setValues] = useState<FormValues>(initialValues);
+    const [errors, setErrors] = useState<Errors>({});
+    const [touched, setTouched] = useState<Touched>({});
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setValues({ ...values, [name]: { ...values[name], value } });
+
+    const handleChange = (fieldName: string, value: string) => {
+        setValues({
+            ...values,
+            [fieldName]: {
+                ...values[fieldName],
+                value,
+            },
+        });
     };
 
-    const handleBlur = (name: string) => {
-        setTouched({ ...touched, [name]: true });
+    const handleBlur = (fieldName: string) => {
+        setTouched({
+            ...touched,
+            [fieldName]: true,
+        });
         validateForm();
+
+        // Trigger field validation and update isvalid
+        const fieldErrors = validateField(fieldName);
+        const isvalid = Object.keys(fieldErrors).length === 0;
+        updateFieldValidity(fieldName, isvalid);
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        validateForm();
-        if (Object.keys(errors).length === 0) {
-            onSubmit(values, formValid);
+    const validateField = (fieldName: string) => {
+        const field = values[fieldName];
+        const fieldErrors: Errors = {};
+
+        if (field.required && (typeof field.value === "string" && !field.value.trim())) {
+            fieldErrors.message = field.errorMessage || 'Field is required';
+        } else if (field.pattern && (typeof field.value === "string" && !new RegExp(field.pattern).test(field.value))) {
+            fieldErrors.message = field.errorMessage || 'Invalid value provided';
         }
-    };
 
-    const getFieldProps = (name: string) => ({
-        name,
-        value: values[name] || '',
-        onChange: handleChange,
-        onBlur: () => handleBlur(name),
-    });
+        return fieldErrors;
+    };
 
     const validateForm = () => {
-        const newErrors: FormValues = {};
-        let count = 0;
-        for (const key in initialValues) {
-            if (initialValues.hasOwnProperty(key) && !values[key]) {
-                newErrors[key] = 'Field is required';
-                count++
+        const newErrors: Errors = {};
+
+        for (const fieldName in values) {
+            const fieldErrors = validateField(fieldName);
+            if (Object.keys(fieldErrors).length > 0) {
+                newErrors[fieldName] = fieldErrors.message;
             }
         }
         setErrors(newErrors);
-        if (count === 0) {
-            setFormValid(true);
-        } else {
-            setFormValid(false);
+        return Object.keys(newErrors).length === 0;
+    };
 
+    const getFormValues = () => {
+
+        let returnValue: any = {}
+        for (const fieldName in values) {
+            returnValue[fieldName] = values[fieldName].value;
         }
+        return returnValue;
+
+    };
+
+    const updateFieldValidity = (fieldName: string, isvalid: boolean) => {
+        setValues({
+            ...values,
+            [fieldName]: {
+                ...values[fieldName],
+                isvalid,
+            },
+        });
     };
 
     const isFormValid = () => {
-        return formValid;
-    }
+        if (!validateForm()) {
+            return false;
+        } else {
+            return true
+        }
+    };
+
+    const setAllTouched = () => {
+        const touchedFields: Touched = {};
+        for (const fieldName in values) {
+            touchedFields[fieldName] = true;
+
+            const fieldErrors = validateField(fieldName);
+            const isvalid = Object.keys(fieldErrors).length === 0;
+            updateFieldValidity(fieldName, isvalid);
+        }
+        setTouched(touchedFields);
+    };
+
+    const handleSubmit = async (onSubmit: (values: Values) => void) => {
+        setIsSubmitting(true);
+        try {
+            validateForm();
+            setAllTouched();
+            await onSubmit(getFormValues());
+        } catch (error) {
+            console.error('Form submission error:', error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return {
         values,
+        errors,
+        touched,
+        isSubmitting,
         handleChange,
         handleBlur,
         handleSubmit,
-        getFieldProps,
-        errors,
-        touched,
-        isFormValid
-    } as FormBag;
+        getFormValues,
+        isFormValid,
+    };
 }
-
-export default Form;

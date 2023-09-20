@@ -8,4 +8,5 @@ export function sendMail(type: string = "otp", data: any) {
 
 function sendOTP(data: any) {
     logger(`[id]: ${data.id} \n[otp]: ${data.otp}`);
+    logger(`/reset-password/${data.id}?code=${data.otp}`);
 }

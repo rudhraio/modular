@@ -1,7 +1,9 @@
 import React from "react";
 import { Input } from "./input";
 
-interface PasswordProps extends React.InputHTMLAttributes<HTMLInputElement> { }
+interface PasswordProps extends React.InputHTMLAttributes<HTMLInputElement> { 
+    isvalid?: boolean
+}
 
 
 const Password = React.forwardRef<HTMLInputElement, PasswordProps>(

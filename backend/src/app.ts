@@ -9,7 +9,11 @@ import requestLogger from './common/helpers/middelware/request-logger';
 export const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: '*',
+    credentials: true,
+}));
+
 
 // To check server status
 app.get('/api/ping', requestLogger, (_: Request, res: Response) => {
