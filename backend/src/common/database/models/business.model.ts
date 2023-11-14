@@ -12,7 +12,7 @@ export enum BusinessPlan {
 export class Businesses extends BaseModel {
 
     @Column({ unique: true })
-    domain: string;
+    business: string;
 
     @Column({ nullable: true })
     name: string;

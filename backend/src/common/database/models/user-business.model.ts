@@ -12,9 +12,21 @@ export enum UserTypes {
     STAFF = 'staff'
 }
 
+export enum InvitationStatusTypes {
+    PENDING = 'pending',
+    ACCEPTED = 'accepted',
+    REJECTED = 'rejected'
+}
+
 
 @Entity({ schema: config.database.schema, name: 'user_business' })
 export class UserBusiness extends BaseModel {
+
+    @Column({ type: "enum", enum: InvitationStatusTypes, default: InvitationStatusTypes.PENDING })
+    status: string;
+
+    @Column({ type: "enum", enum: UserTypes, default: UserTypes.STAFF })
+    user_type: UserTypes;
 
     @ManyToOne(() => Users, (user) => user.id)
     @JoinTable()
@@ -23,7 +35,4 @@ export class UserBusiness extends BaseModel {
     @ManyToOne(() => Businesses, (business) => business.id)
     @JoinTable()
     business: Businesses;
-
-    @Column({ type: "enum", enum: UserTypes, default: UserTypes.STAFF })
-    user_type: UserTypes;
 }

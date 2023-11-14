@@ -18,12 +18,6 @@ async function initialProcess(user: Users, business: Businesses) {
         utility: UtilityType.VERIFY
     });
     sendMail("otp", otp);
-
-
-    setTimeout(() => {
-        logger(`After Delay user ${JSON.stringify(user)}`);
-        logger(`After Delay business ${JSON.stringify(business)}`);
-    }, 5000)
 }
 
 export default initialProcess;

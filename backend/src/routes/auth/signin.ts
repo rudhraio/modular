@@ -8,7 +8,7 @@ import { Repo } from "../../common/database/repository";
 import { successResponse } from "../../common/helpers/response/success";
 import { generateRefreshToken, generateToken } from "../../common/helpers/token";
 import { Businesses } from "../../common/database/models/business.model";
-import { UserBusiness } from "../../common/database/models/user-business.model";
+import { InvitationStatusTypes, UserBusiness } from "../../common/database/models/user-business.model";
 
 
 const signIn = express.Router();
@@ -43,21 +43,45 @@ signIn.post("/", validator(validate), async (req, res) => {
         delete user.salt;
         delete user.password;
 
-        // get userbusiness
-        const userBusiness = await userBusinessRespo.getOne({ where: { user: { id: user.id } }, select: ["user", "business"] });
-
-        // get business data
-        const business = await businessRespo.getOne({ where: { id: userBusiness.business } });
+        const userBusiness = await userBusinessRespo.getAll({
+            where: {
+                user: { id: user.id },
+                status: InvitationStatusTypes.ACCEPTED
+            },
+            relations: ["user", "business"],
+            loadRelationIds: true
+        });
 
         // generate token
-        const token = generateToken({ id: user?.id, domain: business.id, user_type: userBusiness.user_type }, remember ? "30d" : "1d");
+        const token_payload = {
+            id: user?.id
+        }
+        const token = generateToken(token_payload, remember ? "30d" : "1d");
         const refreshToken = generateRefreshToken({ id: user?.id });
 
         // Set the token in a cookie
         res.cookie('access', token, { httpOnly: true, maxAge: 86400000 });
 
+        let response_payload: any = {
+            ...user,
+            access: token,
+            refreshToken: refreshToken
+        }
+
+        if (userBusiness.length === 1) {
+            const role_token_payload = {
+                business: userBusiness[0].business,
+                user_type: userBusiness[0].user_type
+            }
+            const role_token = generateToken(role_token_payload, remember ? "30d" : "1d");
+            res.cookie('role', role_token, { httpOnly: true, maxAge: 86400000 });
+            response_payload.role = role_token;
+        }
+
+
+
         // send response
-        return successResponse(res, "Login successfull", { ...user, domain: business.id, user_type: userBusiness.user_type, access: token, refreshToken: refreshToken });
+        return successResponse(res, "Login successfull", response_payload);
     } catch (err) {
         logger(`[FROM]: signin \n[ERR]: ${err}`);
         return serverErrorResponse(res);

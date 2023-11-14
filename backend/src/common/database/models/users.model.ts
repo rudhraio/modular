@@ -7,17 +7,9 @@ import { UserBusiness } from "./user-business.model";
 import { OTP } from "./otp.model";
 
 
-enum UserTypes {
-    ADMIN = 'admin',
-    OWNER = 'owner',
-    MANAGER = 'manager',
-    STAFF = 'staff'
-}
-
-
 @Entity({ schema: config.database.schema, name: 'users' })
 export class Users extends BaseModel {
-    @Column()
+    @Column({ default: "USER" })
     first_name: string;
 
     @Column({ nullable: true })
@@ -41,13 +33,13 @@ export class Users extends BaseModel {
     @Column({ nullable: true })
     phone_number: string;
 
-    @Column({ nullable: true })
+    @Column({ default: "NA", nullable: true })
     password: string;
 
     @Column({ default: false })
     verified: boolean;
 
-    @Column()
+    @Column({ nullable: true })
     salt: string;
 
     @OneToMany(() => UserBusiness, userBusiness => userBusiness.user)

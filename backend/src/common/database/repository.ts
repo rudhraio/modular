@@ -17,7 +17,8 @@ export class Repo<T>  {
 
     async getOne(data: T) {
         const model = this.repo.findOne(data);
-        return model || {}
+        return model || undefined;
+
     }
 
     async create(data: T) {

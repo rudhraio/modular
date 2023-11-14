@@ -1,5 +1,9 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+
+const cookieParser = require('cookie-parser');
+
+
 import routes from "./routes";
 import { successResponse } from './common/helpers/response/success';
 import { notFoundResponse } from './common/helpers/response/error';
@@ -13,6 +17,7 @@ app.use(cors({
     origin: '*',
     credentials: true,
 }));
+app.use(cookieParser())
 
 
 // To check server status

@@ -1,5 +1,7 @@
-import dev from "./dev.json";
+import dotenv from 'dotenv';
+dotenv.config();
 
+import dev from "./dev";
 
 const environments: any = {
     dev: dev
