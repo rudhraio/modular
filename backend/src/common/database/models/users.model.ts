@@ -18,7 +18,7 @@ export class Users extends BaseModel {
     @Column({ nullable: true })
     description: string;
 
-    @Column({ nullable: true })
+    @Column({ default: "NA", nullable: true })
     image: string;
 
     @Column()
@@ -27,10 +27,10 @@ export class Users extends BaseModel {
     @Column({ unique: true })
     username: string;
 
-    @Column({ nullable: true })
+    @Column({ default: 0, nullable: true })
     ccode: number;
 
-    @Column({ nullable: true })
+    @Column({ default: "NA", nullable: true })
     phone_number: string;
 
     @Column({ default: "NA", nullable: true })

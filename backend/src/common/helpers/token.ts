@@ -4,7 +4,7 @@ import config from '../configs';
 const { secretKey, refreshSecretKey } = config;
 
 export function generateToken(payload: any, expiresIn: string = '1d'): string {
-    return jwt.sign(payload, secretKey, { expiresIn: '1d' });
+    return jwt.sign(payload, secretKey, { expiresIn: expiresIn });
 }
 
 export function generateRefreshToken(payload: any): string {

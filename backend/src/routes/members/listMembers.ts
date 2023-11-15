@@ -27,7 +27,7 @@ listMembers.get("/", authentication, async (req: any, res) => {
 
         return successResponse(res, "members list", checkUserBusiness);
     } catch (err) {
-        logger(`[FROM]: invite \n[ERR]: ${err}`);
+        logger(`[FROM]: members list \n[ERR]: ${err}`);
         return serverErrorResponse(res);
     }
 });
