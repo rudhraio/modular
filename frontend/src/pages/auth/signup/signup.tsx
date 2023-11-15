@@ -34,7 +34,7 @@ function SignUp() {
             pattern: PASSWORD_REGEX,
             errorMessage: 'Please enter valid data'
         },
-        domain: {
+        business: {
             value: '',
             required: true,
             pattern: "",

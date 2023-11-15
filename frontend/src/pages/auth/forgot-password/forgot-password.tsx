@@ -26,7 +26,6 @@ function ForgotPassord() {
     const onSubmit = async (values: any) => {
         setShowError(false);
         setShowSuccess(false);
-        console.log("Values", values);
 
         if (!formHandler.isFormValid()) {
             setErrorMessage("Please fill all fields");

@@ -96,13 +96,13 @@ function SignUpHTML(props: any) {
                     <FormItem>
                         <Label> Business Name </Label>
                         <Input
-                            id="domain"
-                            value={formHandler.values.domain.value}
-                            onChange={(e) => formHandler.handleChange('domain', e.target.value)}
-                            onBlur={() => formHandler.handleBlur('domain')}
-                            isvalid={formHandler.values.domain?.isvalid}
+                            id="business"
+                            value={formHandler.values.business.value}
+                            onChange={(e) => formHandler.handleChange('business', e.target.value)}
+                            onBlur={() => formHandler.handleBlur('business')}
+                            isvalid={formHandler.values.business?.isvalid}
                         />
-                        <FormMessage formHandler={formHandler} field_name="domain" />
+                        <FormMessage formHandler={formHandler} field_name="business" />
                     </FormItem>
                     <div className="items-top flex space-x-2">
                         <Checkbox id="agree_to_terms"

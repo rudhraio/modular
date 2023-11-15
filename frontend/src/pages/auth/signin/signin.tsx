@@ -34,7 +34,6 @@ function SignIn() {
             setErrorMessage("Please fill all fields");
             return;
         }
-        console.log("Values", values);
 
         const response = await signInAPI(values);
         const { data } = response;
