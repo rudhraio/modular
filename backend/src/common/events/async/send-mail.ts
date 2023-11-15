@@ -6,6 +6,10 @@ export function sendMail(type: string = "otp", data: any, subject: string = "Ema
     if (type === "otp") {
         sendOTP({ ...data, subject, body });
     }
+
+    if (type === "invite") {
+        sendInvite(data);
+    }
 }
 
 function sendOTP(data: any) {
@@ -22,20 +26,7 @@ function sendOTP(data: any) {
             "body": body
         };
 
-        // Headers to include in the request
-        const headers = {
-            "token": `${process.env.EMAIL_TOKEN}`
-        };
-
-        // Make the fetch call
-        // Make the Axios POST request
-        axios.post(apiUrl, postData, { headers })
-            .then(response => {
-                logger('Response data:', response.data);
-            })
-            .catch(error => {
-                logger('Axios error:', error);
-            });
+        sendSesMail(postData);
 
     } catch (error) {
         logger(`[Err]: SENDMAIL =-->\n ${error}`);
@@ -43,4 +34,50 @@ function sendOTP(data: any) {
 
     logger(`[id]: ${data.id} \n[otp]: ${data.otp}`);
     logger(`/reset-password/${data.id}?code=${data.otp}`);
+}
+
+export function sendInvite(data: any) {
+    try {
+        const { to, bid, name, is_new, model } = data;
+        const subject = `You have been invited to join ${name}`
+        const body = `${process.env.HOST}/join/${bid}/${is_new ? "" : "?new=false"}`
+
+        const postData = {
+            "to": [`${to}`],
+            "subject": `${subject}`,
+            "body": body
+        };
+        sendSesMail(postData, model);
+
+    } catch (error) {
+        logger(`[Err]: SENDMAIL =-->\n ${error}`);
+    }
+}
+
+function sendSesMail(postData: any, model?: any) {
+
+    const apiUrl: string = process.env.EMAIL_API || "";
+    const headers = {
+        "token": `${process.env.EMAIL_TOKEN}`
+    };
+
+    axios.post(apiUrl, postData, { headers })
+        .then(async response => {
+            logger('Response data:', response.data);
+            console.log("Model", model);
+            if (model) {
+                model.info = { ...model.info, email: "SENT" };
+                await model.save();
+
+            }
+        })
+        .catch(async error => {
+            logger('Axios error:', error);
+            console.log("Model", model);
+
+            if (model) {
+                model.info = { ...model.info, email: "FAILED" };
+                await model.save();
+            }
+        });
 }

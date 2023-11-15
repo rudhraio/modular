@@ -8,14 +8,14 @@ import { UserBusiness } from "../../common/database/models/user-business.model";
 import { query } from "express-validator";
 import validator from "../../common/helpers/middelware/validator";
 
-const accept = express.Router();
+const acceptMember = express.Router();
 
 const validData = [
     query('bid').notEmpty().withMessage('business id cannot be empty.'),
     query('status').notEmpty().withMessage('status cannot be empty.')
 ];
 
-accept.get("/", authentication, validator(validData), async (req: any, res: any) => {
+acceptMember.get("/", authentication, validator(validData), async (req: any, res: any) => {
     try {
         const userBusinessRepo = new Repo(UserBusiness);
 
@@ -51,4 +51,4 @@ accept.get("/", authentication, validator(validData), async (req: any, res: any)
     }
 });
 
-export default accept;
+export default acceptMember;

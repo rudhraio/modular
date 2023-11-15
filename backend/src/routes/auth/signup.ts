@@ -60,6 +60,7 @@ signUp.post("/", validator(validData), async (req, res) => {
         // create business
         const businessData = await businessRespo.create({
             business,
+            name: business,
             created_by: user.id,
             updated_by: user.id
         });

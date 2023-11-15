@@ -1,15 +1,17 @@
 import express from 'express';
-import invite from './invite';
-import membersList from './list';
-import accept from './accept';
+import inviteMembers from './inviteMembers';
+import listMembers from './listMembers';
+import acceptMember from './acceptMember';
+import removeMember from './removeMember';
 
 
 
 const membersRouter = express.Router();
 
-membersRouter.use("/invite", invite);
-membersRouter.use("/list", membersList);
-membersRouter.use("/accept", accept);
+membersRouter.use("/invite", inviteMembers);
+membersRouter.use("/list", listMembers);
+membersRouter.use("/remove", removeMember);
+membersRouter.use("/accept", acceptMember);
 
 
 export default membersRouter;
