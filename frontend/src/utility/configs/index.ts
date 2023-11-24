@@ -1,5 +1,4 @@
-import dev from "./dev.json";
-
+import dev from "./dev";
 
 const environments: any = {
     development: dev

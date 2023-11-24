@@ -1,5 +1,0 @@
-{
-    "port": 3200,
-    "logger": false,
-    "API": "http://localhost:3200"
-}

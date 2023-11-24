@@ -2,11 +2,12 @@ import { ReactNode } from 'react';
 
 interface FormItemProps {
     children: ReactNode;
+    className?: string
 }
 
-const FormItem: React.FC<FormItemProps> = ({ children }) => {
+const FormItem: React.FC<FormItemProps> = ({ children, className }) => {
     return (
-        <div className="flex flex-col gap-y-4 w-full">
+        <div className={`${className} flex flex-col gap-y-4 w-full`}>
             {children}
         </div>
     );

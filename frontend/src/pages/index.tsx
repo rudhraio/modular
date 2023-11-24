@@ -6,7 +6,6 @@ import { Outlet } from "react-router-dom";
 function Page() {
     return (<>
         <PageLayout>
-
             <Outlet />
         </PageLayout>
         <Toaster />
